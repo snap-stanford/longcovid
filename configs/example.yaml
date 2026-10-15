@@ -1,0 +1,5 @@
+name: synthetic_example
+synthetic: true
+data_path: example/cohort
+outcome_manifest: example/analysis_outcomes.csv
+solver: CLARABEL

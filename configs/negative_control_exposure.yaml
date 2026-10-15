@@ -1,0 +1,4 @@
+name: negative_control_exposure
+data_path: raw_data/batches_negative_control_exposure/negative_control_exposure_census
+outcome_manifest: reference/analysis_outcomes.csv
+solver: MOSEK

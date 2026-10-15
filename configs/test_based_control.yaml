@@ -1,0 +1,4 @@
+name: test_based_control
+data_path: raw_data/batches_test_based_control/test_based_control_census
+outcome_manifest: reference/analysis_outcomes.csv
+solver: MOSEK

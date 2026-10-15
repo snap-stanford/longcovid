@@ -1,0 +1,4 @@
+name: unrestricted_control
+data_path: raw_data/batches_unrestricted_control/unrestricted_control_census
+outcome_manifest: reference/analysis_outcomes.csv
+solver: MOSEK

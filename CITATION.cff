@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Please cite the accompanying PNAS article when using this analysis code."
+title: "Revised estimates of types and duration of long COVID symptoms based on claims records from 245 million US patients"
+type: software
+authors:
+  - family-names: Nilforoshan
+    given-names: Hamed
+  - family-names: Reisler
+    given-names: Julia
+  - family-names: Jahanparast
+    given-names: Erfan
+  - family-names: Moor
+    given-names: Michael
+  - family-names: Goodman
+    given-names: Steven N.
+  - family-names: Wager
+    given-names: Stefan
+  - family-names: Leskovec
+    given-names: Jure
