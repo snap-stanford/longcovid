@@ -10,7 +10,7 @@ All 13 automated tests pass, covering:
 - Pre-enrollment diagnosis binarization, retained utilization counts, and preserved follow-up claim counts.
 - Mean imputation of age/ADI.
 - The unregularized nonnegative, sum-to-one balancing objective against an analytically solvable example.
-- Rejection of analysis settings outside the final workflow.
+- Rejection of unsupported configuration settings.
 - Gaussian intervals, two-sided tests, Bonferroni adjustment, and undefined ratios.
 - Patient-token weight alignment and error handling.
 - Exact ICD matching and threaded input reading.

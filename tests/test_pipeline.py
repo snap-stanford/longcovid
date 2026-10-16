@@ -22,7 +22,7 @@ from src.baseline_pipeline.transformation_script import (
     aggregate_outcome_windows,
     prepare_analysis_data,
 )
-from src.publication_analysis import (
+from src.analysis import (
     align_control_weights,
     normal_inference,
     read_outcome_manifest,
@@ -90,10 +90,10 @@ def test_balancing_fits_the_unregularized_simplex_objective():
     np.testing.assert_allclose(weights, [0.75, 0.25], atol=1e-5)
 
 
-def test_superseded_configuration_settings_are_rejected(tmp_path):
+def test_unsupported_configuration_settings_are_rejected(tmp_path):
     path = tmp_path / "config.yaml"
-    path.write_text("name: example\nmethod: historical_setting\n")
-    with pytest.raises(ValueError, match="outside the final manuscript"):
+    path.write_text("name: example\nunsupported_setting: true\n")
+    with pytest.raises(ValueError, match="unsupported analysis settings"):
         run(path)
 
 
@@ -146,7 +146,7 @@ def test_threaded_export_reader_reads_each_file_and_propagates_failure(tmp_path)
         )
 
 
-def test_nonfinal_manifest_requires_explicit_example_mode(tmp_path):
+def test_reduced_outcome_manifest_requires_explicit_example_mode(tmp_path):
     path = tmp_path / "outcomes.csv"
     path.write_text("OUTCOME,negative\nExample,true\n")
     with pytest.raises(ValueError, match="614"):

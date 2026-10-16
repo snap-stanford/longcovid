@@ -1,6 +1,6 @@
 # Available and missing materials
 
-The release includes the final-method monthly feature representation, constrained covariate balancing, four-window effect estimation, bootstrap inference, figure exports, and retained supporting table/geographic/code-list notebooks. Earlier analysis iterations and unverified reference inputs are omitted.
+The code includes monthly feature representation, constrained covariate balancing, four-window effect estimation, bootstrap inference, figure exports, and retained supporting table/geographic/code-list notebooks. Earlier analysis iterations and unverified reference inputs are omitted.
 
 The supplied project does not contain the final cohort-construction/export implementation, authoritative retained-outcome manifest and expanded code table, complete final Census/ADI linkage inputs, or archived final numerical outputs. These are external inputs to the supported pipeline.
 

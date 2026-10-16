@@ -11,7 +11,7 @@ import yaml
 
 from src.baseline_pipeline.convex_script import fit_control_weights
 from src.baseline_pipeline.transformation_script import get_matrices
-from src.publication_analysis import (
+from src.analysis import (
     evaluate_bootstraps,
     read_outcome_manifest,
     summarize_windows,
@@ -32,9 +32,7 @@ def run(config_path, num_cores=1, n_bootstraps=1000, example=False):
     config = yaml.safe_load(config_path.read_text())
     allowed_keys = {"name", "data_path", "outcome_manifest", "solver", "synthetic"}
     if set(config) - allowed_keys:
-        raise ValueError(
-            "The configuration contains settings outside the final manuscript workflow."
-        )
+        raise ValueError("The configuration contains unsupported analysis settings.")
     data_path = Path(config["data_path"])
     if not data_path.is_absolute():
         data_path = Path(DATA_PATH) / data_path
@@ -44,7 +42,7 @@ def run(config_path, num_cores=1, n_bootstraps=1000, example=False):
     manifest = read_outcome_manifest(manifest_path, example=example)
     if not example and n_bootstraps != 1000:
         raise ValueError(
-            "Use 1,000 replicates for publication analyses. The --example flag is for synthetic validation only."
+            "Study analyses require 1,000 bootstrap replicates. Use --example only for synthetic data."
         )
     if n_bootstraps < 2 or num_cores < 1:
         raise ValueError(

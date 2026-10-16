@@ -1,4 +1,4 @@
-"""Sparse data serialization and outcome-label helpers for the published analyses."""
+"""Sparse data serialization and outcome-label helpers."""
 
 import logging
 import os

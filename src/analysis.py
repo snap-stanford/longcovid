@@ -71,7 +71,7 @@ def read_outcome_manifest(path, example=False):
     frame["negative"] = truth.isin(["true", "1"])
     if not example and (len(frame) != 614 or frame["negative"].sum() != 49):
         raise ValueError(
-            "Publication analyses require the author-verified set of 614 outcomes, including 49 negative controls."
+            "The outcome manifest must contain 614 outcomes, including 49 negative controls."
         )
     return frame
 

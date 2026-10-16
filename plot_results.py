@@ -11,7 +11,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 import pandas as pd
 
-from src.publication_analysis import normal_inference
+from src.analysis import normal_inference
 
 WINDOW_TITLES = {
     "0_30": "0–29",

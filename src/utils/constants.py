@@ -1,4 +1,4 @@
-"""Paths shared by preprocessing, weighting, and publication notebooks.
+"""Paths shared by preprocessing, weighting, and analysis notebooks.
 
 Set LONGCOVID_HOME to a secure study workspace before invoking a command.
 Individual reference inputs may be overridden through the corresponding variables.
