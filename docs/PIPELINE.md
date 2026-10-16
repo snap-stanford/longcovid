@@ -1,6 +1,8 @@
 # Pipeline guide
 
-Run commands from the repository root and set paths before launching Python or Jupyter:
+Create and activate the Conda environment using the numbered setup in [README.md](../README.md). It includes the analysis dependencies, tests, and Jupyter. The README also provides a complete synthetic-data walkthrough and expected outputs.
+
+Run commands from the repository root with `longcovid-paper` activated, and set paths before launching Python or Jupyter:
 
 ```bash
 export LONGCOVID_HOME=/secure/path/to/longcovid
@@ -61,4 +63,4 @@ The command exports attributable-outcome count comparisons, RR/RD panels for all
 
 ## 5. Supporting notebooks
 
-Install `requirements-notebooks.txt`. Set `LONGCOVID_STUDY` to the selected design before opening `notebooks/SummaryTable.ipynb`; it writes demographic and healthcare-utilization tables as CSV and LaTeX. `CensusKomodoBiasFigure.ipynb` compares ZIP-3 geographic representation and additionally needs the specified Census/geographic inputs. `DiagnosisICDTable.ipynb` formats the final processed ICD mapping as LaTeX. All notebooks are delivered with outputs cleared.
+The Conda environment includes the notebook dependencies from `requirements-notebooks.txt`. Set `LONGCOVID_STUDY` to the selected design before opening `notebooks/SummaryTable.ipynb`; it writes demographic and healthcare-utilization tables as CSV and LaTeX. `CensusKomodoBiasFigure.ipynb` compares ZIP-3 geographic representation and additionally needs the specified Census/geographic inputs. `DiagnosisICDTable.ipynb` formats the final processed ICD mapping as LaTeX. All notebooks are delivered with outputs cleared.

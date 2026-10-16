@@ -1,6 +1,8 @@
 # Validation
 
-Validated on October 15, 2026 with Python 3.10.22 and the pinned dependencies. The complete resolved environment is in `requirements-lock.txt`.
+Validated on October 15, 2026 with Python 3.10.22 on macOS 15.7.3 (arm64). The pinned scientific/test dependencies are in `requirements-lock.txt`; `environment.yml` adds Jupyter through `requirements-notebooks.txt`.
+
+The documented Conda environment was created successfully with Conda 23.3.1 in an isolated temporary prefix. `python -m pip check` reported no broken requirements, and the Jupyter command was available. The README's test and synthetic-data commands were executed from the repository root in that environment. All 13 tests passed, and the example produced eight effect-estimate rows, four window-panel PDFs, outcome-count and monthly-trajectory PDF/PNG figures, and CSV source tables. The combined test/example walkthrough took approximately 44 seconds on the validation machine, excluding environment installation; this is not a full-study runtime estimate. Documentation links and shell-block syntax were also checked.
 
 All 13 automated tests pass, covering:
 
