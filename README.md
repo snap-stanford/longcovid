@@ -1,52 +1,46 @@
 # Long COVID study: analysis code
 
-Code accompanying **Revised estimates of types and duration of long COVID symptoms based on claims records from 245 million US patients**, by Hamed Nilforoshan, Julia Reisler, Erfan Jahanparast, Michael Moor, Steven N. Goodman, Stefan Wager, and Jure Leskovec (PNAS).
-
-The workflow prepares monthly patient histories, fits synthetic-control weights, estimates effects over four follow-up windows, and exports figures and supporting tables. Three configurations select the test-based control, unrestricted control, and negative-control exposure designs. All three use the same final-method analysis implementation.
+Code for the analyses in **Revised estimates of types and duration of long COVID symptoms based on claims records from 245 million US patients** (PNAS). Author information is provided in [CITATION.cff](CITATION.cff).
 
 ## System requirements
 
-Use Python 3.10 and Conda on Linux or macOS. The checked-in [environment.yml](environment.yml) installs the analysis packages, tests, and Jupyter; the scientific package versions are pinned in [requirements-lock.txt](requirements-lock.txt). Run the commands below from the repository root in a Bash or Zsh terminal.
+The code uses Python 3.10 in a Conda environment on Linux or macOS. [environment.yml](environment.yml) includes the analysis packages, tests, and Jupyter. Scientific package versions are pinned in [requirements-lock.txt](requirements-lock.txt).
 
-The synthetic example runs on a CPU and uses the bundled CLARABEL solver. Study-data analyses use MOSEK and require a valid MOSEK license configured before running the analysis. Full-study memory and runtime requirements depend on the supplied claims exports and have not been benchmarked for this release. Use `-nc 1` to reduce bootstrap worker memory.
+The simulated example runs on a CPU using the CLARABEL solver. Analyses of the study data use MOSEK, which requires a license. Memory and runtime for the full analysis depend on the size of the claims exports; full-study benchmarks are not available. Bootstrap computation can use multiple workers, with `-nc 1` available to reduce worker memory.
 
-## Computing basic results with simulated data
+## Computing basic results
 
-Patient-level study data are supplied separately. The following steps run the available analysis with artificial data and produce example results.
+Run the following commands from the repository root in a Bash or Zsh terminal.
 
-1. Create and activate the environment:
+1. Set up the environment. Create the Conda environment using the supplied file, then activate it before running any code.
 
    ```bash
    conda env create --file environment.yml
    conda activate longcovid-paper
    ```
 
-2. Run the unit and integration tests:
+2. Run the tests. These check the main data transformations, weighting, and statistical calculations, as well as the simulated analysis with one and two workers. The expected result is **13 passed**.
 
    ```bash
    python -m pytest -q
    ```
 
-   The expected result is **13 passed**. These tests cover the final-method transformations and inference, plus the synthetic workflow with one and two workers.
-
-3. Choose a fresh workspace and generate simulated data:
+3. Generate a simulated cohort. The analysis uses non-public claims data. We provide a script that generates artificial data so the code can be run without access to the study records. Set `LONGCOVID_HOME` to a fresh directory for the example.
 
    ```bash
    export LONGCOVID_HOME="$PWD/example_workspace"
    python make_example.py
    ```
 
-   This creates 100 artificial patients, two clinical outcomes, covariates, and an example outcome manifest under `$LONGCOVID_HOME/data/example/`. Use a new workspace for each run; existing example data and analysis outputs are protected from overwriting.
+   This creates 100 artificial patients, two clinical outcomes, and the covariates needed for the analysis under `$LONGCOVID_HOME/data/example/`. Choose a new workspace when repeating the example, since existing data and analysis outputs are protected from overwriting.
 
-4. Fit control weights and estimate effects:
+4. Compute the effect estimates. This fits control weights and estimates effects in the four follow-up windows described in the paper. The example uses the same covariate construction, balancing objective, and inference code, with 20 bootstrap replicates rather than the 1,000 used for the study data.
 
    ```bash
    python baseline_pipeline.py -c example.yaml --example --n-bootstraps 20 -nc 1
    ```
 
-   This uses the study's covariate construction, balancing objective, and inference with 20 bootstrap replicates. The study configurations use 1,000 replicates.
-
-5. Export figures and their source tables:
+5. Make figures. This writes outcome-count comparisons, risk-ratio and risk-difference panels, and monthly trajectories for the selected outcomes. The figure source data are saved as CSV files in the same directory.
 
    ```bash
    python plot_results.py "$LONGCOVID_HOME/outputs/synthetic_example" \
@@ -54,7 +48,7 @@ Patient-level study data are supplied separately. The following steps run the av
      --outcomes Example_respiratory_condition Example_negative_control
    ```
 
-6. Inspect the effect estimates:
+6. Explore the results. The following code loads the effect estimates and displays the risk ratio (`RR`) and monthly risk difference (`RD`) for each outcome and follow-up window.
 
    ```bash
    python - <<'PY'
@@ -69,20 +63,20 @@ Patient-level study data are supplied separately. The following steps run the av
    PY
    ```
 
-   Expect **8 effect-estimate rows**: two outcomes across days 0–29, 30–119, 120–359, and 360–719. The results directory also contains `weights.pkl`, `run_metadata.json`, bootstrap tables, and monthly means. The figure directory contains `attributable_outcome_counts.pdf`, four window-panel PDFs, `monthly_trajectories.pdf`, PNG previews, and CSV source tables. Simulated values illustrate the computation and have no clinical interpretation.
+   With simulated data, the table has **8 rows**: two outcomes in each of the windows covering days 0–29, 30–119, 120–359, and 360–719. These values illustrate the computation and have no clinical interpretation. The results directory also contains the fitted weights, run metadata, bootstrap tables, and monthly means. The figures include `attributable_outcome_counts.pdf`, four window-panel PDFs, and `monthly_trajectories.pdf`, with PNG previews and CSV source tables.
 
 ## Computing results with study data
 
-1. Activate the same environment and select the workspace containing the authorized study inputs:
+These analyses require the study cohort and claims exports, the final expanded ICD mapping, the 614-outcome manifest (including 49 negative controls), and the Census/ADI linkage tables. Input paths and formats are described in [docs/DATA.md](docs/DATA.md). The available analyses and missing materials are listed in [docs/AVAILABILITY.md](docs/AVAILABILITY.md).
+
+1. Set the data directory. Activate the same environment and set `LONGCOVID_HOME` to the directory containing the study inputs.
 
    ```bash
    conda activate longcovid-paper
    export LONGCOVID_HOME=/secure/path/to/longcovid
    ```
 
-   Supply the verified cohort/claims exports, final expanded ICD mapping, 614-outcome manifest (including 49 negative controls), and final Census/ADI linkage tables using the paths and schemas in [docs/DATA.md](docs/DATA.md). The final cohort-construction/export implementation and several supplementary analyses are unavailable; see [docs/AVAILABILITY.md](docs/AVAILABILITY.md) for the complete scope. Analyses can also start from verified prepared cohorts using the layout in the data guide.
-
-2. Prepare monthly histories for each design:
+2. Prepare patient histories. This converts the claims exports into monthly diagnosis and utilization histories and adds the static and Census covariates. Run the preprocessing for each of the three study designs.
 
    ```bash
    for study in test_based_control unrestricted_control negative_control_exposure; do
@@ -93,9 +87,9 @@ Patient-level study data are supplied separately. The following steps run the av
    done
    ```
 
-   Each command writes a prepared cohort to `data/raw_data/batches_<study>/<study>_census/` under the workspace. [docs/PIPELINE.md](docs/PIPELINE.md) explains preprocessing, shared-filesystem execution, and resuming intermediate work.
+   Prepared cohorts are written to `data/raw_data/batches_<study>/<study>_census/` under the workspace. See [docs/PIPELINE.md](docs/PIPELINE.md) for details on shared-filesystem execution and resuming intermediate work. If verified prepared cohorts are already available in the format described in the data guide, start with the next step.
 
-3. Fit weights and run the 1,000-replicate bootstrap for each design:
+3. Compute effects for each study design. The three configurations use the same weighting and bootstrap calculations for the test-based control, unrestricted control, and negative-control exposure analyses. Each command runs 1,000 bootstrap replicates.
 
    ```bash
    python baseline_pipeline.py -c test_based_control.yaml -nc 4
@@ -103,9 +97,9 @@ Patient-level study data are supplied separately. The following steps run the av
    python baseline_pipeline.py -c negative_control_exposure.yaml -nc 4
    ```
 
-   Results are written to `outputs/<study>/` under the workspace. Each `risk_estimates.csv` contains risk ratios, monthly risk differences, confidence intervals, and tests for the four manuscript windows. The objective and inference definitions are in [docs/METHODS.md](docs/METHODS.md).
+   Each analysis writes its results to `outputs/<study>/` under the workspace. The `risk_estimates.csv` file contains risk ratios, monthly risk differences, confidence intervals, and statistical tests for the four follow-up windows. Details of the weighting objective and inference are in [docs/METHODS.md](docs/METHODS.md).
 
-4. Export comparisons across the three designs and selected monthly trajectories:
+4. Make comparison figures. This compares the three study designs and plots monthly trajectories for the selected outcomes from the first study directory. The window panels include all retained outcomes; change `--outcomes` to choose the monthly trajectories, using identifiers from the final manifest.
 
    ```bash
    python plot_results.py \
@@ -116,15 +110,13 @@ Patient-level study data are supplied separately. The following steps run the av
      --outcomes Myopathy Hair_loss Pneumothorax
    ```
 
-   Window panels include all retained outcomes; `--outcomes` selects the monthly trajectories from the first study directory. Use outcome identifiers from the final manifest.
-
-5. Generate supporting descriptive tables and geographic comparisons:
+5. Compute supporting tables and geographic comparisons. Set the study design and open the supplied notebooks.
 
    ```bash
    export LONGCOVID_STUDY=test_based_control
    jupyter notebook notebooks/
    ```
 
-   Run `SummaryTable.ipynb` for demographic/utilization tables, `CensusKomodoBiasFigure.ipynb` for geographic representation, and `DiagnosisICDTable.ipynb` for the ICD-code table. Their additional input requirements are documented in the data and pipeline guides.
+   `SummaryTable.ipynb` produces demographic and healthcare-utilization tables. `CensusKomodoBiasFigure.ipynb` compares geographic representation, and `DiagnosisICDTable.ipynb` produces the ICD-code table. Additional inputs for these notebooks are described in the data and pipeline guides.
 
-Validation details are in [docs/VALIDATION.md](docs/VALIDATION.md); article attribution is in [CITATION.cff](CITATION.cff).
+See [docs/VALIDATION.md](docs/VALIDATION.md) for the environment and validation results.
