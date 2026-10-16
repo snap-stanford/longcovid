@@ -1,9 +1,17 @@
-# Available and missing materials
+# Code and data availability
 
-The code includes monthly feature representation, constrained covariate balancing, four-window effect estimation, bootstrap inference, figure exports, and retained supporting table/geographic/code-list notebooks. Earlier analysis iterations and unverified reference inputs are omitted.
+This repository provides monthly feature construction, constrained covariate balancing, effect estimation for the four follow-up windows, bootstrap inference, figure exports, and notebooks for descriptive tables, geographic comparisons, and ICD-code tables. The simulated example exercises the analysis without access to patient records.
 
-The supplied project does not contain the final cohort-construction/export implementation, authoritative retained-outcome manifest and expanded code table, complete final Census/ADI linkage inputs, or archived final numerical outputs. These are external inputs to the supported pipeline.
+## Study data and reference inputs
 
-Several supplementary analyses are not implemented in the available final code, including the enrollment-period, age-category, local-incidence, patient-identification, and geographic/quarter balance sensitivity analyses. Exact journal artwork and all panel-selection logic are also absent. These missing analyses are left out.
+Patient-level claims and cohort records are not distributed with the code. Running the study-data workflow requires the cohort and claims exports, the 614-outcome manifest, the expanded ICD mapping, and the Census/ADI linkage tables described in [DATA.md](DATA.md). These study inputs must be supplied separately.
 
-The retained code has been checked with synthetic inputs. Full-data comparison against published numerical estimates requires the original study inputs and outputs. The software license and final article identifier were not supplied; no license or DOI has been invented.
+The cohort-construction and export implementation, study reference inputs, and archived study outputs are not included. Analysis can begin with verified prepared cohorts in the format described in the data guide, or with the required exports for preprocessing.
+
+## Analyses outside this repository
+
+The enrollment-period, age-category, local-incidence, patient-identification, and geographic/quarter balance sensitivity analyses are not included. The plotting code produces analysis figures and source tables; exact journal panel assembly and artwork are not included.
+
+## Reproducing results
+
+The automated checks and simulated example validate the implemented workflow. Reproducing the paper's numerical results requires the study inputs and comparison with the original study outputs. Full-data numerical reproduction has not been verified. See [VALIDATION.md](VALIDATION.md) for the checks performed.

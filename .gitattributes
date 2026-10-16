@@ -2,4 +2,6 @@
 *.py text eol=lf
 *.md text eol=lf
 *.yaml text eol=lf
+*.yml text eol=lf
+*.cff text eol=lf
 *.csv text eol=lf
